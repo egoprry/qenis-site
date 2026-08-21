@@ -12,6 +12,7 @@ crisp at any zoom, and the layout reflows properly on phones.
 | X         | set — `https://x.com/TheQenis`          |
 | Telegram  | set — `https://t.co/jKNiAUl4v3`          |
 | About     | opens the team and risk notice dialog   |
+| DEX Screener | opens the live $qenis market page     |
 
 The pump.fun button and both contract copy controls already point at the real
 contract.
@@ -41,6 +42,8 @@ wraps to two lines instead, so it can always be read and verified in full.
 - **about** opens a scrollable team dialog with creator bios, X profiles,
   copyable wallet addresses, and the crypto/liability notice. It uses the same
   close behavior as the how-to-buy dialog.
+- **view on DEX Screener** opens the supplied $qenis market page in a new tab.
+  The same third-party market link appears in the About dialog.
 - Keyboard focus rings, screen-reader labels, and `prefers-reduced-motion`
   support are included throughout.
 
