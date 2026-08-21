@@ -262,7 +262,9 @@ button {
     -1.4rem 0 3.4rem rgba(0, 14, 80, 0.3);
   transform: perspective(2200px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
   transform-origin: 12% 14%;
-  transform-style: preserve-3d;
+  /* A flat transformed plane keeps browser hit-testing continuous across the
+     controls. Nested 3D layers produced small pointer "holes" in Chromium. */
+  transform-style: flat;
   will-change: transform;
   transition: transform 500ms cubic-bezier(0.22, 0.7, 0.3, 1);
 }
@@ -306,7 +308,6 @@ button {
     inset 0 0.35rem 1.4rem rgba(180, 214, 255, 0.3),
     inset 0 -1rem 2rem rgba(10, 30, 140, 0.3),
     0 1rem 2rem rgba(0, 16, 95, 0.22);
-  transform: translateZ(18px);
 }
 
 /* The wordmark ships as artwork, so the 3D bevel is the real render rather
@@ -413,7 +414,7 @@ button {
     inset 0 0 0 3px rgba(var(--gb-ring),.78),
     inset 0 0.048em 0.056em rgba(255,255,255,.12),
     inset 0 -0.056em 0.056em rgba(var(--gb-under),.45);
-  transition: transform 140ms ease;
+  transition: filter 160ms ease;
 }
 .gbtn span {
   pointer-events: none;
@@ -590,6 +591,33 @@ button {
   padding: 0.5rem 1rem;
 }
 
+/* Keep the actual clickable box stationary. Moving a hovered control changes
+   its hit-test boundary and can make the pointer rapidly enter/leave near an
+   edge. The face and colour now animate inside that fixed box instead. */
+@media (hover: hover) and (pointer: fine) {
+  .gbtn:hover {
+    filter: brightness(1.09) saturate(1.08) drop-shadow(0 0.2rem 0.28rem rgba(0, 24, 105, 0.28));
+  }
+
+  .gbtn:hover .gbtn-face {
+    transform: translateY(-1px);
+  }
+
+  .social > svg,
+  .about-button-label {
+    transition: transform 160ms ease;
+  }
+
+  .social:hover > svg,
+  .social:hover .about-button-label {
+    transform: scale(1.06);
+  }
+}
+
+.gbtn:active {
+  filter: brightness(0.98) saturate(1.04);
+}
+
 .gbtn:active .gbtn-face { transform: translateY(1px); }
 
 .gbtn:focus-visible {
@@ -626,11 +654,7 @@ button {
   --gb-cool: 150,240,120;
   --gb-cool2: 170,250,140;
   --gb-lipglint: 150,245,110;
-  transform: translateZ(26px);
 }
-
-.pump-btn:hover { transform: translateZ(26px) translateY(-0.18rem); }
-.pump-btn:active { transform: translateZ(26px) translateY(0.12rem); }
 
 .pump-btn .gbtn-label {
   font-size: 0.24em;
@@ -654,11 +678,7 @@ button {
   display: flex;
   align-items: center;
   min-width: 0;
-  transform: translateZ(14px);
 }
-
-.contract:hover { transform: translateZ(14px) translateY(-0.14rem); }
-.contract:active { transform: translateZ(14px) translateY(0.09rem); }
 
 .shield {
   flex: none;
@@ -698,11 +718,7 @@ button {
   grid-area: how;
   align-self: center;
   --gb-h: clamp(3.8rem, 10vh, 5.6rem);
-  transform: translateZ(14px);
 }
-
-.how-to-buy:hover { transform: translateZ(14px) translateY(-0.14rem); }
-.how-to-buy:active { transform: translateZ(14px) translateY(0.09rem); }
 
 /* Merch card. On desktop the wrapper dissolves so .merch is the grid item itself. */
 
@@ -731,7 +747,6 @@ button {
     inset 0 0.35rem 1.2rem rgba(180, 214, 255, 0.3),
     inset 0 -0.9rem 1.8rem rgba(10, 30, 140, 0.28),
     0 0.8rem 1.7rem rgba(0, 16, 95, 0.24);
-  transform: translateZ(14px);
 }
 
 .merch-kicker {
@@ -777,12 +792,7 @@ button {
   width: var(--gb-h);
   height: var(--gb-h);
   flex: none;
-  transform: translateZ(20px);
-  transition: transform 160ms ease;
 }
-
-.social:hover { transform: translateZ(20px) translateY(-0.22rem) scale(1.06); }
-.social:active { transform: translateZ(20px) translateY(0.05rem); }
 
 /* The icon rides on the label layer without needing a wrapper span. */
 .social svg {
@@ -827,16 +837,6 @@ button {
   margin: clamp(0.45rem, 1.1vh, 0.8rem) auto 0;
   color: var(--cream);
   text-decoration: none;
-  transform: translateZ(20px);
-  transition: transform 160ms ease;
-}
-
-.dex-button:hover {
-  transform: translateZ(20px) translateY(-0.18rem) scale(1.02);
-}
-
-.dex-button:active {
-  transform: translateZ(20px) translateY(0.08rem);
 }
 
 .dex-button-content {

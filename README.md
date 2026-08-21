@@ -127,9 +127,10 @@ cards read as thick glass with a bevelled rim instead of translucent
 rectangles. Backdrop blur is `blur(16px) saturate(1.7)`.
 
 The panel sits at a resting 3/4 tilt (`rotateY(-7deg) rotateX(1.4deg)`) to
-match the mockups, with the inner cards pushed forward on the Z axis
-(`translateZ`) so they float above the glass. Tune the resting angle with two
-variables in `:root`:
+match the mockups. Its children are flattened into that tilted plane; nested
+3D-transformed controls created small Chromium hit-test gaps and unstable hover
+boundaries. The visual depth now comes from the glass shadows and highlights.
+Tune the resting angle with two variables in `:root`:
 
 ```css
 --tilt-rest-x: 1.4deg;
