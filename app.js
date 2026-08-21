@@ -37,11 +37,11 @@
     return copied;
   }
 
-  async function copyText(text) {
+  async function copyText(text, label = 'Contract address') {
     if (navigator.clipboard && window.isSecureContext) {
       try {
         await navigator.clipboard.writeText(text);
-        showToast('Contract address copied');
+        showToast(`${label} copied`);
         return;
       } catch (error) {
         // Fall through to the selection-based path below.
@@ -49,9 +49,9 @@
     }
 
     if (copyViaSelection(text)) {
-      showToast('Contract address copied');
+      showToast(`${label} copied`);
     } else {
-      showToast('Could not copy — open “how to buy” to select it');
+      showToast('Could not copy — press and hold the address instead');
     }
   }
 
@@ -65,7 +65,7 @@
   document.addEventListener('click', (event) => {
     const copyButton = event.target.closest('[data-copy]');
     if (copyButton) {
-      copyText(copyButton.dataset.copy || '');
+      copyText(copyButton.dataset.copy || '', copyButton.dataset.copyLabel || 'Contract address');
       return;
     }
 
@@ -87,6 +87,17 @@
     dialog.addEventListener('click', (event) => {
       if (event.target === dialog) dialog.close();
     });
+  });
+
+  // Keep Escape reliable across browsers, including when a scrollable dialog
+  // panel rather than one of its buttons currently owns keyboard focus.
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    const dialog = document.querySelector('dialog[open]');
+    if (dialog instanceof HTMLDialogElement) {
+      event.preventDefault();
+      dialog.close();
+    }
   });
 
   /* ---------- Pointer parallax on the glass panel ----------

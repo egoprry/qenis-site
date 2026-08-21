@@ -5,20 +5,16 @@ CSS. Nothing is a flat image of the mockup: the title plate, buttons, contract
 bar, merch card, and social row are live elements, so text stays selectable and
 crisp at any zoom, and the layout reflows properly on phones.
 
-## Links you still need to fill in
-
-Three social buttons ship with `href="#"` placeholders. Open `index.html` and
-replace them:
+## Official links
 
 | Button    | Status                                  |
 | --------- | --------------------------------------- |
 | X         | set — `https://x.com/TheQenis`          |
-| Telegram  | set — `https://t.me/+mbH20IrYeLhkZTk5`  |
-| Instagram | **placeholder `#`**                     |
-| YouTube   | **placeholder `#`**                     |
-| TikTok    | **placeholder `#`**                     |
+| Telegram  | set — `https://t.co/jKNiAUl4v3`          |
+| About     | opens the team and risk notice dialog   |
 
-The pump.fun button and both copy buttons already point at the real contract.
+The pump.fun button and both contract copy controls already point at the real
+contract.
 
 ## Contract address
 
@@ -42,6 +38,9 @@ wraps to two lines instead, so it can always be read and verified in full.
 - **how to buy** opens a dialog with the three buying steps plus a second copy
   button. Closes on Escape, the × button, the "Got it" button, or a
   click on the backdrop.
+- **about** opens a scrollable team dialog with creator bios, X profiles,
+  copyable wallet addresses, and the crypto/liability notice. It uses the same
+  close behavior as the how-to-buy dialog.
 - Keyboard focus rings, screen-reader labels, and `prefers-reduced-motion`
   support are included throughout.
 
@@ -80,8 +79,8 @@ measured tan tones to build the extruded edge.
 
 ## The glass button component
 
-Every button — `how to buy`, `buy on pump.fun`, the contract bar and the five
-socials — is one component, `.gbtn`, ported from
+Every main control — `how to buy`, `buy on pump.fun`, the contract bar, X,
+Telegram and About — uses the same `.gbtn` component, ported from
 `qenis-how-to-buy-button.html`. Each instance carries the same layer stack:
 
 ```html
@@ -197,6 +196,8 @@ Shipped in `assets/`:
 | `qenis-wordmark.png`  | the `$qenis` title artwork (transparent)    |
 | `leaves.webp`         | the three foliage overlays                  |
 | `qenis.webp`          | the character (transparent)                 |
+| `qzoomer-profile.jpg` | Qzoomer portrait in the About dialog        |
+| `golem-profile.jpg`   | Golem portrait in the About dialog          |
 | `qenis-icon-*.png`    | favicon and web app manifest                |
 
 The two backgrounds are downscaled to 1200px and 860px wide and saved as JPEG.

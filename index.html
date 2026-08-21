@@ -107,28 +107,19 @@
         </div>
       </div>
 
-      <nav class="socials" aria-label="Official social links">
-        <!-- TODO: replace href values with the official links -->
+      <nav class="socials" aria-label="Official links and project information">
         <a class="gbtn social" href="https://x.com/TheQenis" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
           <span class="gbtn-rim" aria-hidden="true"></span><span class="gbtn-face" aria-hidden="true"></span><span class="gbtn-glints" aria-hidden="true"></span><span class="gbtn-groove" aria-hidden="true"></span><span class="gbtn-lip" aria-hidden="true"></span>
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 1.8h3.4l-7.4 8.5 8.7 11.5h-6.8L11.5 15l-6.1 6.8H2l7.9-9L1.6 1.8h7l4.8 6.3zm-1.2 18h1.9L7.4 3.7H5.4z"/></svg>
         </a>
-        <a class="gbtn social" href="https://t.me/+mbH20IrYeLhkZTk5" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+        <a class="gbtn social" href="https://t.co/jKNiAUl4v3" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
           <span class="gbtn-rim" aria-hidden="true"></span><span class="gbtn-face" aria-hidden="true"></span><span class="gbtn-glints" aria-hidden="true"></span><span class="gbtn-groove" aria-hidden="true"></span><span class="gbtn-lip" aria-hidden="true"></span>
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 3.4L2.7 10.8c-1.3.5-1.3 1.3-.2 1.6l4.9 1.5 1.9 5.8c.2.6.1.9.8.9.5 0 .8-.2 1.1-.5l2.6-2.5 5 3.7c.9.5 1.6.2 1.8-.9l3.3-15.5c.3-1.3-.5-1.9-1.4-1.5zM8.5 13.9l10.6-6.7c.5-.3 1-.1.6.2l-9 8.1-.4 3.8z"/></svg>
         </a>
-        <a class="gbtn social" href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+        <button class="gbtn social about-button" type="button" data-dialog="about-dialog" aria-label="About the qenis team">
           <span class="gbtn-rim" aria-hidden="true"></span><span class="gbtn-face" aria-hidden="true"></span><span class="gbtn-glints" aria-hidden="true"></span><span class="gbtn-groove" aria-hidden="true"></span><span class="gbtn-lip" aria-hidden="true"></span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.4"/><circle cx="17.6" cy="6.4" r="1.3" fill="currentColor" stroke="none"/></svg>
-        </a>
-        <a class="gbtn social" href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-          <span class="gbtn-rim" aria-hidden="true"></span><span class="gbtn-face" aria-hidden="true"></span><span class="gbtn-glints" aria-hidden="true"></span><span class="gbtn-groove" aria-hidden="true"></span><span class="gbtn-lip" aria-hidden="true"></span>
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.2 7.3a3 3 0 0 0-2.1-2.1C19.3 4.7 12 4.7 12 4.7s-7.3 0-9.1.5A3 3 0 0 0 .8 7.3 31 31 0 0 0 .3 12a31 31 0 0 0 .5 4.7 3 3 0 0 0 2.1 2.1c1.8.5 9.1.5 9.1.5s7.3 0 9.1-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.7 31 31 0 0 0-.5-4.7zM9.7 15.4V8.6l6.1 3.4z"/></svg>
-        </a>
-        <a class="gbtn social" href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-          <span class="gbtn-rim" aria-hidden="true"></span><span class="gbtn-face" aria-hidden="true"></span><span class="gbtn-glints" aria-hidden="true"></span><span class="gbtn-groove" aria-hidden="true"></span><span class="gbtn-lip" aria-hidden="true"></span>
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.7 2h-3.2v13.6a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V9.5a6.2 6.2 0 0 0-.9-.1 6.2 6.2 0 1 0 6.2 6.2V8.7a7.5 7.5 0 0 0 4.4 1.4V6.9a4.5 4.5 0 0 1-3.2-1.4A4.4 4.4 0 0 1 16.7 2z"/></svg>
-        </a>
+          <span class="about-button-label">about</span>
+        </button>
       </nav>
     </main>
   </div>
@@ -154,6 +145,66 @@
         <strong>Copy</strong>
       </button>
       <p class="fine-print">Meme tokens are highly volatile and may lose all value. Nothing on this site is financial advice.</p>
+      <button class="dialog-primary" type="button" data-close-dialog>Got it</button>
+    </div>
+  </dialog>
+
+  <dialog class="glass-dialog about-dialog" id="about-dialog" aria-labelledby="about-title">
+    <div class="dialog-panel">
+      <button class="dialog-close" type="button" data-close-dialog aria-label="Close">&times;</button>
+      <p class="dialog-kicker">BEHIND $QENIS</p>
+      <h2 id="about-title">About the team</h2>
+
+      <div class="team-list">
+        <article class="team-card">
+          <img class="team-photo" src="assets/qzoomer-profile.jpg" alt="Qzoomer" width="400" height="400">
+          <div class="team-details">
+            <h3>qzoomer</h3>
+            <p>qzoomer is the creator of qenis. Since the token launched, he has locked his entire supply for one year.</p>
+            <a class="team-x" href="https://x.com/Qzoomer1" target="_blank" rel="noopener noreferrer" aria-label="Qzoomer on X">x: @Qzoomer1</a>
+          </div>
+          <button
+            class="wallet-card"
+            type="button"
+            data-copy="5if9BdpVtp3RFGGVKyvoN7J5oTqouNNvJMjK5nP3y2uh"
+            data-copy-label="Qzoomer wallet address"
+            aria-label="Copy Qzoomer wallet address"
+          >
+            <span>Wallet</span>
+            <code>5if9BdpVtp3RFGGVKyvoN7J5oTqouNNvJMjK5nP3y2uh</code>
+            <strong>Copy</strong>
+          </button>
+        </article>
+
+        <article class="team-card">
+          <img class="team-photo" src="assets/golem-profile.jpg" alt="Golem" width="400" height="400">
+          <div class="team-details">
+            <h3>golem</h3>
+            <p>Creator of the qenis website and merch.</p>
+            <a class="team-x" href="https://x.com/egoprry" target="_blank" rel="noopener noreferrer" aria-label="Golem on X">x: @egoprry</a>
+          </div>
+          <button
+            class="wallet-card"
+            type="button"
+            data-copy="9X8pCgb1vZbD8Y3jgpNUqAeeJRmoXPXpgRVRm85JbuCv"
+            data-copy-label="Golem wallet address"
+            aria-label="Copy Golem wallet address"
+          >
+            <span>Wallet</span>
+            <code>9X8pCgb1vZbD8Y3jgpNUqAeeJRmoXPXpgRVRm85JbuCv</code>
+            <strong>Copy</strong>
+          </button>
+        </article>
+      </div>
+
+      <p class="team-soon">More of the team soon.</p>
+
+      <section class="risk-notice" aria-labelledby="risk-title">
+        <h3 id="risk-title">Crypto &amp; liability notice</h3>
+        <p>$qenis is a meme token, not an investment product. Crypto assets are highly speculative and volatile, and you may lose your entire purchase. Nothing on this site is financial, legal, or tax advice. No price, liquidity, utility, or return is promised.</p>
+        <p>This site and its links are provided “as is.” To the fullest extent permitted by law, the team and site contributors accept no liability for losses arising from trading decisions, third-party wallets or platforms, scams, compromised keys, or network failures. Verify the official contract, protect your seed phrase, do your own research, and only risk what you can afford to lose.</p>
+      </section>
+
       <button class="dialog-primary" type="button" data-close-dialog>Got it</button>
     </div>
   </dialog>
