@@ -1,0 +1,1202 @@
+/* Palette sampled pixel-by-pixel from design-refs/ref-desktop.png and the
+   isolated component sheet. Hex values are the measured colours; keep them in
+   sync with the artwork rather than eyeballing new ones. */
+:root {
+  /* Lettering: face, two extrusion steps, and the top specular. */
+  --cream: #f8f0e6;
+  --cream-lit: #fff6d5;
+  --cream-deep: #e3d5c0;
+  --tan: #d4ccbe;
+  --tan-deep: #83733e;
+
+  --gold: #e38861;
+
+  /* Sky behind everything. */
+  --sky: #1e5cd8;
+  --sky-hi: #2661dd;
+
+  /* Blues, measured off each component. */
+  --glass-body: rgba(0, 71, 221, 0.7);
+  --plate-blue: rgba(2, 47, 226, 0.62);
+  --contract-blue: #0a2fee;
+  --howto-blue: #244ef7;
+  --howto-rim: #0123e6;
+  --merch-blue: #0154da;
+  --social-blue: #2340e6;
+  --social-rim: #001dde;
+  --warn-navy: #0b2da6;
+
+  /* pump.fun capsule. */
+  --pump-dark: #001a00;
+  --pump-dark-hi: #032c03;
+  --pump-green: #22b400;
+  --pump-green-hi: #3ae20c;
+  --pump-green-lo: #1a8f00;
+
+  --font-round: "Poppins", "Century Gothic", Arial, sans-serif;
+  --font-sans: "Poppins", Arial, Helvetica, sans-serif;
+
+  /* Thick-glass rim. Three stacked inset rings read as a bevelled edge with
+     real depth rather than a single flat 1px border. */
+  --rim-light: rgba(255, 255, 255, 0.85);
+  --rim-mid: rgba(150, 190, 255, 0.4);
+  --rim-dark: rgba(10, 30, 130, 0.45);
+
+  /* Live tilt. Resting angles match the 3/4 view in the mockup; app.js nudges
+     them with the pointer. Reset to 0 on narrow screens. */
+  --tilt-rest-x: 1.4deg;
+  --tilt-rest-y: -7deg;
+  --tilt-x: var(--tilt-rest-x);
+  --tilt-y: var(--tilt-rest-y);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--sky);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Scene ---------- */
+
+.scene {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: var(--sky);
+  isolation: isolate;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Background render on its own layer so it can carry a blur without softening
+   any of the content above it. Scaled up so the blur has no feathered edge. */
+.scene::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: -4%;
+  background:
+    linear-gradient(180deg, rgba(120, 170, 255, 0.18), rgba(120, 170, 255, 0.08) 60%, rgba(120, 170, 255, 0.05)),
+    url("assets/scene-wide.jpg") center center / cover no-repeat,
+    var(--sky);
+  filter: blur(5px) saturate(1.05);
+  transform: scale(1.04);
+  pointer-events: none;
+}
+
+/* ---------- Leaves + bubbles ---------- */
+
+/* Stacking order: background < bubbles(2) < character(4) < leaves(5) < UI(6).
+   Leaves sit over the character so it stands in the foliage, but never over
+   the cards, which would clip their text. */
+.leaves {
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+  height: 104%;
+  width: auto;
+}
+
+.leaves-left {
+  left: -2%;
+  bottom: -3%;
+}
+
+.leaves-right {
+  right: -10%;
+  bottom: -6%;
+  height: 92%;
+  transform: scaleX(-1);
+}
+
+.leaves-top-right {
+  right: -4%;
+  top: -12%;
+  height: 58%;
+  transform: scaleX(-1) scaleY(-1);
+  opacity: 0.95;
+}
+
+.bubble {
+  position: absolute;
+  z-index: 2;
+  border-radius: 50%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 68% 72%, rgba(255, 190, 240, 0.35), rgba(255, 255, 255, 0) 42%),
+    radial-gradient(circle at 50% 50%, rgba(160, 200, 255, 0.12), rgba(140, 190, 255, 0.3) 88%, rgba(255, 255, 255, 0.65) 97%);
+  box-shadow: inset 0 0 0.35rem rgba(255, 255, 255, 0.4);
+  animation: bubble-drift 7s ease-in-out infinite alternate;
+}
+
+.bubble-1 { left: 33%; bottom: 6%;  width: 5.5rem; height: 5.5rem; }
+.bubble-2 { left: 39%; bottom: 22%; width: 2.4rem; height: 2.4rem; animation-delay: -2s; }
+.bubble-3 { left: 2%;  top: 34%;    width: 3.2rem; height: 3.2rem; animation-delay: -4s; }
+.bubble-4 { right: 24%; bottom: 12%; width: 2rem; height: 2rem; animation-delay: -5s; }
+
+@keyframes bubble-drift {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-1.4rem); }
+}
+
+/* ---------- Warning card ---------- */
+
+.warning {
+  position: absolute;
+  z-index: 11;
+  top: clamp(1.5rem, 6vh, 3.6rem);
+  left: clamp(1rem, 2.5vw, 2.4rem);
+  /* Sized to stay clear of the panel, which claims 62vw plus its right gutter. */
+  width: min(24rem, 25.5vw);
+  padding: 1.1rem 1.4rem 1.2rem;
+  border: 2px solid var(--gold);
+  border-radius: 1.4rem;
+  background: linear-gradient(160deg, rgba(17, 57, 186, 0.88), rgba(6, 32, 140, 0.9));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 226, 150, 0.28),
+    inset 0 0.3rem 1rem rgba(255, 255, 255, 0.18),
+    inset 0 -0.6rem 1.4rem rgba(8, 20, 110, 0.5),
+    0 0.8rem 2.4rem rgba(0, 14, 90, 0.42);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  color: #fff;
+}
+
+.warning-title {
+  margin: 0 0 0.45rem;
+  color: var(--gold);
+  font: 600 clamp(1rem, 1.45vw, 1.4rem)/1.2 var(--font-sans);
+  letter-spacing: 0.02em;
+}
+
+.warning-sign {
+  margin-right: 0.35rem;
+}
+
+.warning-body {
+  margin: 0;
+  font: 600 clamp(0.8rem, 1vw, 0.98rem)/1.45 var(--font-sans);
+}
+
+/* ---------- Character ---------- */
+
+.qenis {
+  position: absolute;
+  z-index: 4;
+  left: clamp(2rem, 7vw, 9rem);
+  bottom: 5%;
+  height: clamp(13rem, 45vh, 28rem);
+  width: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 1.2rem 1.6rem rgba(0, 20, 90, 0.35));
+  pointer-events: none;
+}
+
+/* ---------- Glass helpers ---------- */
+
+.panel,
+.title-plate,
+.contract,
+.how-to-buy,
+.merch,
+.social,
+.socials {
+  /* backdrop-filter: blur(16px) saturate(1.7); */
+  /* -webkit-backdrop-filter: blur(16px) saturate(1.7); */
+}
+
+/* ---------- Main panel ---------- */
+
+/* The panel runs off the right and bottom edges of the viewport, so only its
+   top-left corner is ever visible — that is the one corner that gets a radius.
+   Negative right/bottom push the other edges out of frame. */
+.panel {
+  position: absolute;
+  z-index: 6;
+  left: clamp(14rem, 33vw, 46rem);
+  top: clamp(0.9rem, 3.2vh, 2.6rem);
+  right: -8vw;
+  bottom: -10vh;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  /* Right/bottom padding absorbs the off-screen bleed so content stays framed. */
+  padding:
+    clamp(1.4rem, 2.6vw, 2.8rem)
+    calc(8vw + clamp(1.4rem, 3.4vw, 3.6rem))
+    calc(10vh + clamp(0.8rem, 2vh, 1.6rem))
+    clamp(1.4rem, 2.6vw, 2.8rem);
+  border-radius: clamp(2rem, 3.4vw, 3.4rem) 0 0 0;
+  background:
+    linear-gradient(155deg,
+      rgba(24, 96, 244, 0.42),
+      rgba(0, 71, 221, 0.44) 42%,
+      rgba(0, 55, 200, 0.5));
+  box-shadow:
+    /* No white keyline — just a soft cool edge and interior depth. */
+    inset 0 0 2.2rem 0.4rem rgba(10, 40, 160, 0.34),
+    inset 0 0.3rem 2rem rgba(180, 214, 255, 0.28),
+    inset 0 -2rem 4rem rgba(8, 26, 130, 0.3),
+    -1.4rem 0 3.4rem rgba(0, 14, 80, 0.3);
+  transform: perspective(2200px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transform-origin: 12% 14%;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 500ms cubic-bezier(0.22, 0.7, 0.3, 1);
+}
+
+/* Glancing specular sweep across the top of the glass. */
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 38%;
+  border-radius: inherit;
+  background: linear-gradient(rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0));
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Keep real content above the specular sweep, which is positioned and would
+   otherwise paint over the unpositioned children.
+   The panel itself runs off screen, so the content column is capped to roughly
+   the width it has in the mockup rather than stretching into the bleed. */
+.title-plate,
+.panel-grid,
+.socials {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: min(62rem, 56vw);
+}
+
+/* Title plate */
+
+.title-plate {
+  margin: 0 0 clamp(1rem, 2.2vh, 1.6rem);
+  padding: clamp(0.9rem, 2.6vh, 2rem) clamp(1rem, 2vw, 2rem);
+  border-radius: clamp(1.4rem, 2.6vw, 2.4rem);
+  text-align: center;
+  background:
+    linear-gradient(160deg, rgba(20, 76, 246, 0.42), rgba(2, 47, 226, 0.36) 55%, rgba(0, 36, 205, 0.44));
+  box-shadow:
+    inset 0 0 1.6rem 0.2rem rgba(10, 40, 160, 0.28),
+    inset 0 0.35rem 1.4rem rgba(180, 214, 255, 0.3),
+    inset 0 -1rem 2rem rgba(10, 30, 140, 0.3),
+    0 1rem 2rem rgba(0, 16, 95, 0.22);
+  transform: translateZ(18px);
+}
+
+/* The wordmark ships as artwork, so the 3D bevel is the real render rather
+   than a stack of text-shadows. The h1's alt text carries the name. */
+.title-mark {
+  display: block;
+  /* Height-driven so the panel's content column always fits the viewport,
+     which is what constrains this layout now that the panel bleeds. */
+  height: clamp(3.4rem, 23vh, 13rem);
+  width: auto;
+  max-width: 100%;
+  margin: 0 auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0.7rem 1.1rem rgba(0, 18, 90, 0.42));
+}
+
+/* Grid: pump + contract / how-to-buy + merch */
+
+.panel-grid {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1.8fr) minmax(0, 3.2fr);
+  grid-template-areas:
+    "pump contract"
+    "how  merch";
+  gap: clamp(0.8rem, 1.8vh, 1.4rem) clamp(0.8rem, 1.6vw, 1.4rem);
+  align-items: start;
+}
+
+/* ---------- Glass button system ----------
+   Ported from qenis-how-to-buy-button.html. The template was authored at a
+   fixed 366x125, so every dimension here is divided by that height and
+   expressed in `em`, with `font-size` pinned to the button height — one
+   component then scales to any button. Horizontal offsets stay in % so wide
+   bars keep the same proportions.
+
+   Layer order: base body (on .gbtn) < rim < face < glints < groove < lip < label.
+   Palette lives in custom properties so variants can retint the whole stack. */
+
+.gbtn {
+  --gb-h: 5rem;
+  --gb-r: 999px;
+
+  --gb-body: linear-gradient(180deg,
+    #062ed7 0%, #075eff 7%, #0754fb 20%, #0049f4 65%,
+    #00159a 80%, #0056e5 87%, #02b5ef 100%);
+  --gb-face: linear-gradient(180deg,
+    #0847fc 0%, #043afa 24%, #002ff0 52%, #001fd5 78%, #0019ca 100%);
+  --gb-rim: linear-gradient(180deg,
+    rgba(78,157,255,.54) 0%, rgba(5,79,255,.18) 23%,
+    rgba(0,39,222,.18) 67%, rgba(0,23,160,.58) 81%, rgba(14,164,245,.80) 100%);
+  --gb-groove: linear-gradient(180deg,
+    rgba(2,49,232,.62) 0%, rgba(0,10,145,.94) 37%,
+    rgba(0,22,170,.88) 64%, rgba(0,91,232,.44) 100%);
+  --gb-lip: linear-gradient(180deg,
+    rgba(0,38,176,.18) 0%, rgba(0,102,232,.68) 24%, rgba(8,157,243,.82) 47%,
+    rgba(3,99,247,.86) 73%, rgba(0,34,157,.16) 100%);
+
+  --gb-edge: 4,25,120;      /* dark keyline */
+  --gb-ring: 0,91,255;      /* inner ring */
+  --gb-under: 0,231,255;    /* cyan under-glow */
+  --gb-glow: 35,231,255;    /* bottom bloom */
+  --gb-tint: 0,82,255;      /* corner glint mid-tone */
+  --gb-tint2: 0,127,255;
+  --gb-cool: 84,165,255;
+  --gb-cool2: 111,224,255;
+  --gb-lipglint: 91,217,255;
+
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: var(--gb-h);
+  font-size: var(--gb-h);   /* 1em == button height */
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--gb-r);
+  overflow: hidden;
+  isolation: isolate;
+  text-decoration: none;
+  color: #fff;
+  cursor: pointer;
+  background:
+    radial-gradient(ellipse 0.248em 0.336em at 7.8% 27%,
+      rgba(255,255,255,.99) 0 6%, rgba(190,235,255,.97) 8%,
+      rgba(var(--gb-cool),.82) 16%, rgba(var(--gb-tint),.30) 36%, transparent 67%),
+    radial-gradient(ellipse 0.24em 0.344em at 92.8% 26%,
+      rgba(255,255,255,.99) 0 6%, rgba(197,241,255,.98) 8%,
+      rgba(var(--gb-cool),.86) 17%, rgba(var(--gb-tint),.32) 37%, transparent 68%),
+    radial-gradient(ellipse 0.288em 0.248em at 7% 84%,
+      rgba(255,255,255,.90) 0 6%, rgba(var(--gb-cool2),.85) 14%,
+      rgba(var(--gb-tint2),.34) 42%, transparent 69%),
+    radial-gradient(ellipse 0.304em 0.256em at 93% 84%,
+      rgba(255,255,255,.92) 0 5%, rgba(var(--gb-cool2),.90) 13%,
+      rgba(var(--gb-tint2),.36) 42%, transparent 70%),
+    radial-gradient(ellipse 44% 13% at 52% 98%,
+      rgba(var(--gb-glow),.98) 0, rgba(0,164,255,.82) 47%,
+      rgba(0,76,246,.15) 76%, transparent 100%),
+    var(--gb-body);
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--gb-edge),.96),
+    inset 0 0 0 3px rgba(var(--gb-ring),.78),
+    inset 0 0.048em 0.056em rgba(255,255,255,.12),
+    inset 0 -0.056em 0.056em rgba(var(--gb-under),.45);
+  transition: transform 140ms ease;
+}
+
+/* Translucent glass thickness. */
+.gbtn-rim {
+  position: absolute;
+  z-index: 1;
+  inset: 0.032em 0.048em 0.048em;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 0.144em 0.272em at 3.8% 36%, rgba(177,226,255,.56), rgba(15,111,255,.21) 40%, transparent 72%),
+    radial-gradient(ellipse 0.16em 0.288em at 96.5% 38%, rgba(206,244,255,.72), rgba(10,127,255,.25) 42%, transparent 73%),
+    var(--gb-rim);
+  box-shadow:
+    inset 0 0 0 2px rgba(56,145,255,.72),
+    inset 0 0.04em 0.04em rgba(255,255,255,.17),
+    inset 0 -0.032em 0.04em rgba(72,221,255,.32);
+}
+
+.gbtn-rim::before {
+  content: "";
+  position: absolute;
+  left: 11.3%;
+  right: 9.6%;
+  top: -0.016em;
+  height: 0.08em;
+  border-radius: 50%;
+  background: linear-gradient(180deg,
+    rgba(0,29,180,.28), rgba(49,129,255,.72) 38%, rgba(5,68,247,.28) 72%, transparent);
+}
+
+/* Opaque face. */
+.gbtn-face {
+  position: absolute;
+  z-index: 2;
+  left: 0.088em;
+  right: 0.088em;
+  top: 0.072em;
+  bottom: 0.176em;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 44% 50% at 48% 16%, rgba(19,79,255,.34), transparent 78%),
+    var(--gb-face);
+  box-shadow:
+    inset 0 0 0 2px rgba(43,116,255,.72),
+    inset 0 0.048em 0.064em rgba(255,255,255,.16),
+    inset 0 -0.064em 0.072em rgba(0,0,118,.42),
+    0 0.032em 0.024em rgba(0,0,94,.78),
+    0 0.056em 0.064em rgba(0,0,76,.36);
+  transition: transform 120ms ease;
+}
+
+/* Broad upper sheen. */
+.gbtn-face::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse 0.16em 0.2em at 4.8% 15%, rgba(255,255,255,.98) 0 7%, rgba(151,205,255,.70) 23%, transparent 62%),
+    radial-gradient(ellipse 0.168em 0.208em at 95.4% 15%, rgba(255,255,255,.98) 0 7%, rgba(157,210,255,.74) 23%, transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.15) 0%, rgba(255,255,255,.025) 18%, transparent 36%);
+  pointer-events: none;
+}
+
+/* Thin white specular line along the top. */
+.gbtn-face::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  left: 6.1%;
+  right: 6.1%;
+  top: 0;
+  height: 0.056em;
+  border-radius: 50%;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,.15) 0%, rgba(255,255,255,.98) 43%,
+    rgba(180,222,255,.77) 56%, rgba(255,255,255,0) 100%);
+  opacity: .92;
+  pointer-events: none;
+}
+
+/* Concentrated highlights around the glass perimeter. */
+.gbtn-glints {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 0.064em 0.104em at 7.0% 20%, rgba(255,255,255,.98) 0 17%, rgba(174,226,255,.74) 30%, transparent 68%),
+    radial-gradient(ellipse 0.056em 0.088em at 5.8% 31%, rgba(255,255,255,.98) 0 15%, rgba(132,205,255,.68) 28%, transparent 69%),
+    radial-gradient(ellipse 0.064em 0.104em at 93.0% 20%, rgba(255,255,255,.99) 0 16%, rgba(178,232,255,.78) 30%, transparent 70%),
+    radial-gradient(ellipse 0.056em 0.096em at 95.2% 34%, rgba(255,255,255,.98) 0 16%, rgba(145,218,255,.72) 30%, transparent 70%),
+    radial-gradient(ellipse 0.088em 0.064em at 9.0% 91%, rgba(255,255,255,.96) 0 14%, rgba(125,222,255,.74) 30%, transparent 70%),
+    radial-gradient(ellipse 0.088em 0.064em at 90.7% 91%, rgba(255,255,255,.98) 0 14%, rgba(131,227,255,.78) 31%, transparent 70%),
+    radial-gradient(ellipse 0.144em 0.36em at 99.0% 58%, rgba(71,234,255,.74), rgba(0,139,255,.27) 40%, transparent 72%),
+    radial-gradient(ellipse 0.128em 0.352em at 1.0% 57%, rgba(57,172,255,.58), rgba(0,88,255,.25) 42%, transparent 73%);
+}
+
+.gbtn-groove {
+  position: absolute;
+  z-index: 4;
+  left: 5.2%;
+  right: 4.6%;
+  bottom: 0.072em;
+  height: 0.136em;
+  border-radius: 50%;
+  pointer-events: none;
+  background: var(--gb-groove);
+  box-shadow:
+    inset 0 0.016em 0.024em rgba(25,96,255,.52),
+    0 0.016em 0.024em rgba(0,0,91,.36);
+  opacity: .82;
+}
+
+/* Cyan lower lip. */
+.gbtn-lip {
+  position: absolute;
+  z-index: 5;
+  left: 7.9%;
+  right: 6.8%;
+  bottom: 0.016em;
+  height: 0.104em;
+  border-radius: 50%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 0.224em 0.08em at 9% 43%, rgba(255,255,255,.90), rgba(var(--gb-lipglint),.65) 35%, transparent 72%),
+    radial-gradient(ellipse 0.24em 0.08em at 91% 43%, rgba(255,255,255,.92), rgba(var(--gb-lipglint),.66) 35%, transparent 72%),
+    var(--gb-lip);
+  opacity: .90;
+}
+
+.gbtn-label {
+  position: absolute;
+  z-index: 6;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(0, -0.032em);
+  font-family: var(--font-sans);
+  font-size: 0.312em;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.028em;
+  white-space: nowrap;
+  color: #fff;
+  text-align: center;
+  text-rendering: geometricPrecision;
+  text-shadow:
+    0.026em 0.103em 0 rgba(0,0,137,.82),
+    0.051em 0.18em 0.154em rgba(0,0,92,.72),
+    0 0.026em 0.026em rgba(175,207,255,.35);
+  pointer-events: none;
+}
+
+/* Content that is not a plain label (the contract bar) sits on the same layer
+   but stays interactive-looking and can lay itself out. */
+.gbtn-content {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem 1rem;
+}
+
+.gbtn:active .gbtn-face { transform: translateY(1px); }
+
+.gbtn:focus-visible {
+  outline: 0.16em solid #fff;
+  outline-offset: 0.04em;
+}
+
+/* Pump.fun capsule — same construction, green palette and the mockup's
+   hard 50/50 dark-to-vivid split on the face. */
+
+.pump-btn {
+  grid-area: pump;
+  --gb-h: clamp(5.5rem, 13.5vh, 8.5rem);
+  --gb-body: linear-gradient(96deg,
+    var(--pump-dark) 0%, var(--pump-dark-hi) 46%,
+    var(--pump-green-hi) 50%, var(--pump-green) 62%, var(--pump-green-lo) 100%);
+  --gb-face: linear-gradient(96deg,
+    #021401 0%, #04240a 46%, #35d70e 50%, #22b400 64%, #178200 100%);
+  --gb-rim: linear-gradient(180deg,
+    rgba(150,255,120,.34) 0%, rgba(20,140,10,.18) 23%,
+    rgba(0,60,0,.22) 67%, rgba(0,40,0,.58) 81%, rgba(90,240,60,.62) 100%);
+  --gb-groove: linear-gradient(180deg,
+    rgba(20,120,10,.55) 0%, rgba(0,32,0,.94) 37%,
+    rgba(0,48,4,.88) 64%, rgba(28,150,12,.44) 100%);
+  --gb-lip: linear-gradient(180deg,
+    rgba(0,50,0,.2) 0%, rgba(26,140,10,.66) 24%, rgba(74,214,32,.82) 47%,
+    rgba(40,170,14,.86) 73%, rgba(0,44,0,.18) 100%);
+  --gb-edge: 2,28,2;
+  --gb-ring: 26,140,10;
+  --gb-under: 120,255,90;
+  --gb-glow: 130,255,90;
+  --gb-tint: 20,150,10;
+  --gb-tint2: 40,180,20;
+  --gb-cool: 150,240,120;
+  --gb-cool2: 170,250,140;
+  --gb-lipglint: 150,245,110;
+  transform: translateZ(26px);
+}
+
+.pump-btn:hover { transform: translateZ(26px) translateY(-0.18rem); }
+.pump-btn:active { transform: translateZ(26px) translateY(0.12rem); }
+
+.pump-btn .gbtn-label {
+  font-size: 0.24em;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  white-space: normal;
+}
+
+.pump-btn-text small {
+  font-size: 0.78em;
+  font-weight: 700;
+}
+
+/* Contract bar — same glass, wider and squarer, with real content inside. */
+
+.contract {
+  grid-area: contract;
+  --gb-h: clamp(3.6rem, 9vh, 5rem);
+  --gb-r: 1.35rem;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  transform: translateZ(14px);
+}
+
+.contract:hover { transform: translateZ(14px) translateY(-0.14rem); }
+.contract:active { transform: translateZ(14px) translateY(0.09rem); }
+
+.shield {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: clamp(1.6rem, 2.1vw, 2.2rem);
+}
+
+.shield svg { width: 100%; height: auto; filter: drop-shadow(0 0.15rem 0.25rem rgba(0, 20, 90, 0.4)); }
+
+.contract-address {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: #fff;
+  font: 600 clamp(0.55rem, 0.95vw, 1.08rem)/1.25 var(--font-sans);
+  letter-spacing: -0.02em;
+  /* Never truncate: the whole point of showing it is that people can verify
+     it against pump.fun. On very narrow screens it wraps instead. */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: left;
+  text-shadow: 0 0.1em 0.25em rgba(0, 20, 100, 0.4);
+}
+
+.copy-icon {
+  flex: none;
+  width: clamp(1.3rem, 1.8vw, 1.7rem);
+  color: #fff;
+  opacity: 0.9;
+}
+
+.copy-icon svg { width: 100%; height: auto; display: block; }
+
+/* How to buy */
+
+.how-to-buy {
+  grid-area: how;
+  align-self: center;
+  --gb-h: clamp(3.8rem, 10vh, 5.6rem);
+  transform: translateZ(14px);
+}
+
+.how-to-buy:hover { transform: translateZ(14px) translateY(-0.14rem); }
+.how-to-buy:active { transform: translateZ(14px) translateY(0.09rem); }
+
+/* Merch card. On desktop the wrapper dissolves so .merch is the grid item itself. */
+
+.merch-row {
+  display: contents;
+}
+
+.qenis-inline {
+  display: none;
+}
+
+.merch {
+  grid-area: merch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(0.5rem, 1.4vh, 1rem);
+  min-height: clamp(8rem, 21vh, 12.5rem);
+  padding: 1.2rem;
+  border-radius: clamp(1.3rem, 2.4vw, 2.1rem);
+  text-align: center;
+  background: linear-gradient(165deg, rgba(8, 92, 232, 0.4), rgba(0, 72, 202, 0.36) 55%, rgba(0, 54, 176, 0.42));
+  box-shadow:
+    inset 0 0 1.6rem 0.2rem rgba(10, 40, 160, 0.28),
+    inset 0 0.35rem 1.2rem rgba(180, 214, 255, 0.3),
+    inset 0 -0.9rem 1.8rem rgba(10, 30, 140, 0.28),
+    0 0.8rem 1.7rem rgba(0, 16, 95, 0.24);
+  transform: translateZ(14px);
+}
+
+.merch-kicker {
+  margin: 0;
+  color: #d8ecff;
+  font: 600 clamp(0.72rem, 1vw, 0.98rem)/1 var(--font-sans);
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  text-shadow: 0 0.1em 0.3em rgba(0, 20, 100, 0.55);
+}
+
+.merch-title {
+  margin: 0;
+  max-width: 100%;
+  color: var(--cream);
+  font: 800 clamp(1.5rem, 3vw, 2.9rem)/1.05 var(--font-round);
+  letter-spacing: -0.01em;
+  text-shadow:
+    -0.012em 0.024em 0 var(--cream-deep),
+    -0.024em 0.048em 0 var(--tan),
+    -0.03em 0.06em 0.02em rgba(52, 44, 22, 0.4),
+    -0.03em 0.09em 0.13em rgba(0, 18, 90, 0.5);
+}
+
+/* Socials */
+
+.socials {
+  display: flex;
+  justify-content: center;
+  gap: clamp(0.9rem, 2vw, 1.7rem);
+  margin: clamp(1rem, 2.4vh, 1.7rem) 0 0;
+  padding: 0;
+  border-radius: 999px;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Circular variant of the same glass button. */
+.social {
+  --gb-h: clamp(3.2rem, 4.8vw, 5.4rem);
+  --gb-r: 50%;
+  width: var(--gb-h);
+  height: var(--gb-h);
+  flex: none;
+  transform: translateZ(20px);
+  transition: transform 160ms ease;
+}
+
+.social:hover { transform: translateZ(20px) translateY(-0.22rem) scale(1.06); }
+.social:active { transform: translateZ(20px) translateY(0.05rem); }
+
+/* The icon rides on the label layer without needing a wrapper span. */
+.social svg {
+  position: relative;
+  z-index: 6;
+  width: 44%;
+  height: auto;
+  margin: auto;
+  filter: drop-shadow(0 0.12rem 0.2rem rgba(0, 20, 90, 0.45));
+}
+
+.social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Focus states */
+
+.pump-btn:focus-visible,
+.contract:focus-visible,
+.how-to-buy:focus-visible,
+.social:focus-visible,
+.dialog-primary:focus-visible,
+.dialog-close:focus-visible,
+.address-card:focus-visible {
+  outline: 0.2rem solid #fff;
+  outline-offset: 0.2rem;
+}
+
+/* ---------- Dialogs ---------- */
+
+.glass-dialog {
+  width: min(92vw, 34rem);
+  max-height: min(86vh, 46rem);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 2.2rem;
+  overflow: visible;
+  color: var(--cream);
+  background: transparent;
+}
+
+.glass-dialog::backdrop {
+  background: rgba(0, 18, 75, 0.69);
+  backdrop-filter: blur(0.5rem) saturate(1.2);
+  -webkit-backdrop-filter: blur(0.5rem) saturate(1.2);
+}
+
+.dialog-panel {
+  position: relative;
+  overflow: auto;
+  max-height: min(86vh, 46rem);
+  padding: clamp(1.5rem, 6vw, 2.5rem);
+  border: 0.18rem solid rgba(255, 255, 255, 0.78);
+  border-radius: 2.2rem;
+  background:
+    radial-gradient(circle at 18% 6%, rgba(255, 255, 255, 0.48), transparent 18%),
+    linear-gradient(145deg, rgba(60, 110, 240, 0.98), rgba(20, 50, 180, 0.98) 58%, rgba(10, 34, 140, 0.98));
+  box-shadow:
+    inset 0 0.2rem 0.8rem rgba(255, 255, 255, 0.45),
+    inset 0 -0.75rem 1.3rem rgba(0, 13, 81, 0.55),
+    0 1.4rem 4rem rgba(0, 17, 76, 0.48);
+}
+
+.dialog-panel h2 {
+  margin: 0.25rem 0 0.85rem;
+  color: var(--cream);
+  font: 800 clamp(2rem, 8vw, 3.1rem)/0.95 var(--font-round);
+  text-shadow: -0.02em 0.05em 0 var(--tan), -0.02em 0.09em 0.12em rgba(0, 0, 0, 0.35);
+}
+
+.dialog-panel p,
+.how-steps {
+  margin: 0 0 1.1rem;
+  color: #fff;
+  font: 600 1rem/1.55 var(--font-sans);
+}
+
+.how-steps {
+  padding-left: 1.3rem;
+}
+
+.how-steps li { margin-bottom: 0.5rem; }
+
+.dialog-kicker {
+  display: inline-block;
+  margin-bottom: 0.4rem !important;
+  padding: 0.4rem 0.72rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 0.08rem rgba(255, 255, 255, 0.32);
+  font: 700 0.78rem/1 var(--font-sans) !important;
+  letter-spacing: 0.12em;
+}
+
+.dialog-close {
+  position: absolute;
+  z-index: 1;
+  top: 0.9rem;
+  right: 0.9rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0.12rem solid rgba(255, 255, 255, 0.65);
+  border-radius: 50%;
+  color: var(--cream);
+  background: rgba(0, 32, 135, 0.55);
+  box-shadow: inset 0 0.2rem 0.4rem rgba(255, 255, 255, 0.26), 0 0.45rem 0.8rem rgba(0, 0, 0, 0.25);
+  font: 900 1.65rem/1 Arial, Helvetica, sans-serif;
+  cursor: pointer;
+}
+
+.dialog-primary {
+  min-width: 9rem;
+  min-height: 3.2rem;
+  padding: 0.7rem 1.2rem;
+  border: 0.14rem solid #062e05;
+  border-radius: 999px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 30% 16%, rgba(255, 255, 255, 0.7), transparent 13%),
+    linear-gradient(#3fce22, #149d11 58%, #087b0a);
+  box-shadow:
+    inset 0 0.2rem 0.45rem rgba(255, 255, 255, 0.55),
+    inset 0 -0.4rem 0.55rem rgba(0, 70, 0, 0.46),
+    0 0.45rem 0 #0a2a80,
+    0 0.75rem 1.2rem rgba(0, 0, 0, 0.3);
+  font: 700 1.05rem/1 var(--font-round);
+  cursor: pointer;
+}
+
+.dialog-primary:active {
+  transform: translateY(0.22rem);
+  box-shadow:
+    inset 0 0.2rem 0.45rem rgba(255, 255, 255, 0.5),
+    inset 0 -0.3rem 0.45rem rgba(0, 70, 0, 0.46),
+    0 0.22rem 0 #0a2a80,
+    0 0.45rem 0.8rem rgba(0, 0, 0, 0.25);
+}
+
+.address-card {
+  position: relative;
+  display: grid;
+  width: 100%;
+  gap: 0.35rem;
+  margin: 1.1rem 0;
+  padding: 1rem 4.4rem 1rem 0.9rem;
+  overflow: hidden;
+  border: 0.16rem solid rgba(255, 255, 255, 0.5);
+  border-radius: 1.35rem;
+  color: #fff;
+  text-align: left;
+  background: linear-gradient(160deg, rgba(90, 130, 250, 0.5), rgba(30, 60, 200, 0.6));
+  box-shadow:
+    inset 0 0.25rem 0.45rem rgba(255, 255, 255, 0.35),
+    inset 0 -0.35rem 0.45rem rgba(10, 30, 140, 0.4),
+    0 0.5rem 0.85rem rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
+.address-card span {
+  font: 700 0.75rem/1 var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.address-card code {
+  overflow-wrap: anywhere;
+  font: 600 clamp(0.7rem, 2.6vw, 0.79rem)/1.35 var(--font-sans);
+}
+
+.address-card strong {
+  position: absolute;
+  top: 50%;
+  right: 0.85rem;
+  transform: translateY(-50%);
+  padding: 0.65rem;
+  border: 0.12rem solid rgba(255, 255, 255, 0.6);
+  border-radius: 999px;
+  font: 700 0.78rem/1 var(--font-sans);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.fine-print {
+  opacity: 0.78;
+  font-size: 0.83rem !important;
+}
+
+/* ---------- Toast ---------- */
+
+.toast {
+  position: fixed;
+  z-index: 20;
+  left: 50%;
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  transform: translate(-50%, 1rem);
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  padding: 0.75rem 1.2rem;
+  border: 0.1rem solid rgba(255, 255, 255, 0.85);
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(20, 50, 170, 0.95);
+  box-shadow: inset 0 0.15rem 0.35rem rgba(255, 255, 255, 0.34), 0 0.8rem 2rem rgba(0, 20, 90, 0.38);
+  opacity: 0;
+  pointer-events: none;
+  font: 700 0.92rem/1 var(--font-sans);
+  text-align: center;
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ---------- Intermediate desktop ----------
+   Between the stacked breakpoint and roomy desktops the panel creeps left,
+   so the warning has to shrink to stay clear of it. */
+
+@media (min-width: 921px) and (max-width: 1280px) {
+  .warning {
+    padding: 0.85rem 1rem 0.95rem;
+  }
+
+  .warning-title { font-size: clamp(0.82rem, 1.5vw, 1.05rem); }
+  .warning-body { font-size: clamp(0.68rem, 1.1vw, 0.82rem); }
+}
+
+/* ---------- Mobile / narrow ---------- */
+
+@media (max-width: 920px) {
+  /* Flat on phones: a tilted panel this close to the viewport edges would
+     push its corners off screen. */
+  :root {
+    --tilt-rest-x: 0deg;
+    --tilt-rest-y: 0deg;
+  }
+
+  .scene {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.7rem, 2.5vw, 1.2rem);
+    padding: clamp(0.8rem, 3vw, 1.6rem) clamp(0.5rem, 2vw, 1rem);
+  }
+
+  /* Portrait crop of the same render, so phones do not get a wide scene
+     squeezed into a tall frame. */
+  .scene::before {
+    background:
+      linear-gradient(180deg, rgba(120, 170, 255, 0.18), rgba(120, 170, 255, 0.08) 60%, rgba(120, 170, 255, 0.05)),
+      url("assets/scene-tall.jpg") center center / cover no-repeat,
+      var(--sky);
+    filter: blur(4px) saturate(1.05);
+  }
+
+  /* Back to a contained card on phones — the bleed is a desktop composition. */
+  .panel {
+    position: static;
+    order: 1;
+    width: 100%;
+    max-width: 40rem;
+    inset: auto;
+    margin: 0;
+    padding: clamp(1.1rem, 3.6vw, 1.9rem);
+    padding-bottom: clamp(1.2rem, 4vw, 2rem);
+    border-radius: clamp(1.6rem, 5vw, 2.4rem);
+  }
+
+  /* The desktop content cap exists only to keep content out of the bleed. */
+  .title-plate,
+  .panel-grid,
+  .socials {
+    max-width: 100%;
+  }
+
+  /* The leaves sit above the panel (z-index 10) for the framing, which on tall
+     phone viewports had them painting over the social buttons. The tilt is
+     already 0 here, so dropping the transform removes the panel's stacking
+     context and lets the social row lift clear of the foliage. */
+  .panel {
+    transform: none;
+    transform-style: flat;
+    /* will-change alone would still create a stacking context, and so does a
+       z-index on a flex item even at position: static — both have to go or
+       the social row cannot lift above the foliage. */
+    will-change: auto;
+    z-index: auto;
+  }
+
+  .socials {
+    z-index: 12;
+  }
+
+  .title-mark {
+    height: auto;
+    width: min(100%, 22rem);
+  }
+
+  /* Warning moves into normal flow above the panel so it can never overlap. */
+  .warning {
+    position: static;
+    order: 0;
+    width: 100%;
+    max-width: 40rem;
+    transform: none;
+    padding: 0.9rem 1.1rem 1rem;
+  }
+
+  .warning-title { font-size: clamp(1.05rem, 4.6vw, 1.3rem); }
+  .warning-body { font-size: clamp(0.82rem, 3.6vw, 0.95rem); }
+
+  .title-plate { padding: clamp(1.2rem, 5vw, 2rem) 0.75rem; }
+
+  .panel-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.9rem;
+  }
+
+  /* These are .gbtn instances, so size them through --gb-h. Setting
+     font-size or min-height directly would break the em scale the whole
+     layer stack is built on. */
+  .pump-btn {
+    --gb-h: clamp(4.6rem, 17vw, 6rem);
+  }
+
+  .contract {
+    --gb-h: clamp(3.2rem, 12vw, 4.2rem);
+  }
+
+  .contract-address { font-size: clamp(0.5rem, 2.35vw, 0.85rem); }
+  .shield { width: clamp(1.35rem, 5vw, 1.9rem); }
+  .copy-icon { width: clamp(1.1rem, 4.2vw, 1.5rem); }
+  .gbtn-content { padding: 0.4rem 0.7rem; }
+
+  .how-to-buy {
+    align-self: flex-start;
+    width: 62%;
+    --gb-h: clamp(3.4rem, 13vw, 4.6rem);
+  }
+
+  /* The character stands beside the merch card, in flow, so it can never
+     collide with the socials bar the way an absolutely placed one would. */
+  .merch-row {
+    display: flex;
+    align-items: flex-end;
+    gap: clamp(0.3rem, 1.5vw, 0.8rem);
+  }
+
+  .qenis-inline {
+    display: block;
+    flex: 0 0 40%;
+    width: 40%;
+    height: auto;
+    margin-bottom: -0.35rem;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0.6rem 0.9rem rgba(0, 20, 90, 0.35));
+  }
+
+  .merch {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: clamp(8.5rem, 34vw, 11rem);
+    padding: 1rem 0.75rem;
+  }
+
+  .merch-kicker { letter-spacing: 0.3em; text-indent: 0.3em; font-size: clamp(0.6rem, 2.4vw, 0.8rem); }
+  .merch-title { font-size: clamp(1.6rem, 7.4vw, 2.4rem); }
+
+  /* The absolute character is desktop-only. */
+  .qenis { display: none; }
+
+  .leaves-left { height: 62%; left: -22%; }
+  .leaves-right { height: 62%; right: -22%; }
+  .leaves-top-right { height: 34%;  }
+
+  .bubble-1 { left: 4%; bottom: 44%; width: 2.6rem; height: 2.6rem; }
+  .bubble-2 { left: 86%; bottom: 62%; }
+  .bubble-3 { top: 18%; width: 2.2rem; height: 2.2rem; }
+  .bubble-4 { right: 6%; bottom: 26%; }
+
+  .socials {
+    gap: clamp(0.6rem, 3vw, 1.2rem);
+    width: 100%;
+    padding: clamp(0.6rem, 2.5vw, 0.9rem) clamp(0.8rem, 3vw, 1.4rem);
+    background: linear-gradient(160deg, rgba(70, 130, 250, 0.5), rgba(10, 58, 214, 0.46));
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+      inset 0 0 0 3px rgba(120, 165, 255, 0.28),
+      inset 0 0.35rem 0.9rem rgba(255, 255, 255, 0.45),
+      inset 0 -0.6rem 1.2rem rgba(10, 30, 140, 0.32),
+      0 0.8rem 1.8rem rgba(0, 16, 95, 0.3);
+    backdrop-filter: blur(6px) saturate(1.15);
+    -webkit-backdrop-filter: blur(6px) saturate(1.15);
+  }
+
+  .social { --gb-h: clamp(3rem, 13vw, 3.8rem); }
+}
+
+@media (max-width: 440px) {
+  .dialog-panel,
+  .glass-dialog {
+    border-radius: 1.7rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
